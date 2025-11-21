@@ -1,0 +1,16 @@
+[project]
+name = "external-secrets-reloader"
+version = "0.0.1"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.41.1",
+]
+
+[project.scripts]
+external-secrets-reloader = "external_secrets_reloader.main:main"
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
