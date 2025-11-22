@@ -1,33 +1,22 @@
 from dataclasses import dataclass
 from enum import Enum
 from os import environ
+from typing import Literal
+
+from pydantic import (
+    AliasChoices,
+    AmqpDsn,
+    BaseModel,
+    Field,
+    ImportString,
+    PostgresDsn,
+    RedisDsn,
+)
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-
-class EnvironmentVariables(Enum):
-    SQS_QUEUE_ARN = "SQS_QUEUE_ARN"
-    HEALTH_CHECK_PORT = "HEALTH_CHECK_PORT"
-    LOG_LEVEL = "LOG_LEVEL"
-
-
-@dataclass
-class EnvironmentSettings():
+class Settings(BaseSettings):
     SQS_QUEUE_ARN: str
-    HEALTH_CHECK_PORT: int
-    LOG_LEVEL: str
-    
-
-
-class Settings():
-
-    def __init__(self):
-        
-        self.environment_settings = EnvironmentSettings(
-            SQS_QUEUE_ARN=environ.get(EnvironmentVariables.SQS_QUEUE_ARN),
-            HEALTH_CHECK_PORT=int(environ.get(EnvironmentVariables.HEALTH_CHECK_PORT, '8080')),
-            LOG_LEVEL = environ.get(EnvironmentVariables.LOG_LEVEL, "INFO")
-        )
-
-    def get_environment_settings(self) -> EnvironmentSettings:
-        return self.environment_settings
-
+    HEALTH_CHECK_PORT: int = Field(ge=1024, lt=65535)
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARN", "ERROR"] = "INFO"

@@ -34,8 +34,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 print("==== SIG Handlers Registered ====")
 
-
-settings = Settings().get_environment_settings()
+settings = Settings()
 
 print("==== Environment Settings Parsed ====")
 
@@ -101,7 +100,7 @@ def main() -> None:
         
     except Exception as e:
         error_msg = f"Failed to initialize components: {str(e)}"
-        logger.error(error_msg)
+        logger.error(error_msg, exc_info=e)
         health_status.set_healthy(False, error_msg)
         health_status.set_ready(False)
         return
