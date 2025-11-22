@@ -1,0 +1,13 @@
+# clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: external-secret-reloader-editor-role
+rules:
+- apiGroups: ["external-secrets.io"]
+  resources: ["externalsecrets"]
+  # The essential verbs are:
+  # 'list' for querying all CRs
+  # 'patch' for adding/modifying annotations
+  # 'watch' is good practice for controllers to receive updates
+  verbs: ["get", "list", "watch", "patch"]

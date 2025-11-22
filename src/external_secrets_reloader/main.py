@@ -7,6 +7,8 @@ from external_secrets_reloader.event_handler.aws_parameter_store_event_handler i
 from external_secrets_reloader.processors.eventbridge_processor import EventBridgeProcessor
 from external_secrets_reloader.processors.sqs_processor import SQSProcessor
 from external_secrets_reloader.reloader.eso_aws_parameter_store_reloader import ESOAWSParameterStoreReloader
+from external_secrets_reloader.health_check import start_health_check_server, get_health_status
+from external_secrets_reloader.settings import Settings
 
 print("==== Starting Application ====")
 
@@ -32,8 +34,20 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 print("==== SIG Handlers Registered ====")
 
+
+settings = Settings().get_environment_settings()
+
+print("==== Environment Settings Parsed ====")
+
+logging_levels = {
+    'ERROR': logging.ERROR,
+    'WARN': logging.WARN,
+    'INFO': logging.INFO,
+    'DEBUG': logging.DEBUG,
+}
+
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging_levels.get(settings.LOG_LEVEL, logging.INFO),
     format='%(asctime)s [%(levelname)s] %(name)s : %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
@@ -64,11 +78,34 @@ def main() -> None:
 
     print(startup_message + "\n\n")
 
-    sqs_processor = SQSProcessor("https://sqs.us-east-1.amazonaws.com/445477118420/ssm-parameter-store-event-queue")
-    event_bridge_processor = EventBridgeProcessor(sqs_processor)
+    # Start health check server for Kubernetes probes
+    logger.debug("Starting Health Check Endpoints")
+    start_health_check_server(port=8080)
+    # Get the health status object to update during initialization
+    health_status = get_health_status()
+    health_status.set_ready(False)  # Mark as not ready during initialization
+    logger.debug("Health Check Endpoints Started")
 
-    esoapsr = ESOAWSParameterStoreReloader()
-    aws_pseh = AWSParameterStoreEventHandler(event_bridge_processor, esoapsr)
+    
+    try:
+        logger.info("Initializing processors and handlers...")
+        sqs_processor = SQSProcessor(settings.SQS_QUEUE_ARN)
+        event_bridge_processor = EventBridgeProcessor(sqs_processor)
+
+        esoapsr = ESOAWSParameterStoreReloader()
+        aws_pseh = AWSParameterStoreEventHandler(event_bridge_processor, esoapsr)
+        
+        logger.info("All components initialized successfully")
+        health_status.set_healthy(True)
+        health_status.set_ready(True)
+        
+    except Exception as e:
+        error_msg = f"Failed to initialize components: {str(e)}"
+        logger.error(error_msg)
+        health_status.set_healthy(False, error_msg)
+        health_status.set_ready(False)
+        return
 
     while CONTINUE_PROCESSING:
         aws_pseh.poll_for_events()
+
