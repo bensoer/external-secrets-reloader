@@ -1,0 +1,5 @@
+# README.md - We need to send that, its bundled in the build
+Dockerfile
+.gitignore
+.venv
+dist

@@ -6,11 +6,15 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "boto3>=1.41.1",
+    "kubernetes>=34.1.0",
 ]
 
 [project.scripts]
-external-secrets-reloader = "external_secrets_reloader.main:main"
+external-secrets-reloader = "external_secrets_reloader.__main__:main"
+
+[tool.uv.build-backend]
+module-name = "external_secrets_reloader"
 
 [build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.9.11,<0.10.0"]
+build-backend = "uv_build"

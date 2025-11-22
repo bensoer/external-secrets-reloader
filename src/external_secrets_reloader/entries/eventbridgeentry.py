@@ -3,9 +3,9 @@
 import json
 import logging
 
-from external_secrets_reloader.clouds.aws.parameter_store_key_parser import ParameterStoreKeyParser
+from external_secrets_reloader.parsers.key_parser import KeyParser
 
-class EventBridgeEntry(ParameterStoreKeyParser):
+class EventBridgeEntry(KeyParser):
 
     def __init__(self, event_bridge_entry:str):
         self._logger = logging.getLogger(self.__class__.__name__)
@@ -22,5 +22,5 @@ class EventBridgeEntry(ParameterStoreKeyParser):
     def get_operation(self) -> str:
         return self.entry["detail"]["operation"]
     
-    def get_parameter_store_key(self):
+    def get_key(self):
         return self.entry["detail"]["name"]
