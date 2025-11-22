@@ -1,6 +1,6 @@
 
 
-from external_secrets_reloader.parsers.eso_key_parser import ESOKeyParser
+from external_secrets_reloader.parsers.eso_key_parser import KeyParser
 from external_secrets_reloader.processors.processor import Processor
 import logging
 
@@ -8,7 +8,7 @@ from external_secrets_reloader.reloader.eso_aws_parameter_store_reloader import 
 
 class AWSParameterStoreEventHandler():
 
-    def __init__(self, processor: Processor[ESOKeyParser], reloader: ESOAWSParameterStoreReloader):
+    def __init__(self, processor: Processor[KeyParser], reloader: ESOAWSParameterStoreReloader):
         self.processor = processor
         self.reloader = reloader
         self._logger = logging.getLogger(self.__class__.__name__)

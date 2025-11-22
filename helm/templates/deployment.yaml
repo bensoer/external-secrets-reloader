@@ -22,6 +22,7 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+    terminationGracePeriodSeconds: 90 # Needs this long as longest hanging service can be up to 1 minute
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

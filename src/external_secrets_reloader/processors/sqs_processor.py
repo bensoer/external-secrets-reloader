@@ -8,11 +8,12 @@ from external_secrets_reloader.processors.processor import Processor
 
 class SQSProcessor(Processor[SQSEntry]):
 
-    def __init__(self, queue_url: str):
+    def __init__(self, queue_url: str, wait_time:int):
         self.sqs_client = boto3.client('sqs')
         self._logger = logging.getLogger(self.__class__.__name__)
 
         self.queue_url = queue_url
+        self.wait_time = wait_time
 
         # When it comes out the sqs_client it returns already as a dict
         self.current_message = dict()
@@ -22,7 +23,7 @@ class SQSProcessor(Processor[SQSEntry]):
         self._logger.debug("Hanging To Receive Next Message")
         response = self.sqs_client.receive_message(
             QueueUrl=self.queue_url,
-            MaxNumberOfMessages=1,
+            MaxNumberOfMessages=self.wait_time,
             WaitTimeSeconds=10
         ) 
 

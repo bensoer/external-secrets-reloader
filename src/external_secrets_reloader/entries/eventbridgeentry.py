@@ -3,9 +3,9 @@
 import json
 import logging
 
-from external_secrets_reloader.parsers.key_parser import KeyParser
+from external_secrets_reloader.parsers.eso_key_parser import ESOKeyParser
 
-class EventBridgeEntry(KeyParser):
+class EventBridgeEntry(ESOKeyParser):
 
     def __init__(self, event_bridge_entry:str):
         self._logger = logging.getLogger(self.__class__.__name__)
