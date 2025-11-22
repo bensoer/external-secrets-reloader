@@ -1,7 +1,7 @@
 [project]
 name = "external-secrets-reloader"
 version = "0.0.1"
-description = "Add your description here"
+description = "Event-driven ESO ExternalSecrets Reloader"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
