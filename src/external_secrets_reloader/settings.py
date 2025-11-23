@@ -50,3 +50,5 @@ class Settings(BaseSettings):
             # 2. Required Fields Check: SQS settings are mandatory for AWS
             if self.SQS_QUEUE_URL is None:
                 raise ValueError("SQS_QUEUE_URL is required when EVENT_CLOUD='AWS'.")
+        
+        return self
