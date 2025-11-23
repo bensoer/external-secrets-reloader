@@ -41,7 +41,7 @@ class ESOAWSParameterStoreReloader(Reloader):
             }
         }
 
-    def reload(self, key):
+    def reload(self, key) -> bool:
 
         try:
 
@@ -107,6 +107,7 @@ class ESOAWSParameterStoreReloader(Reloader):
                     )
 
                     self._logger.debug(f"Applying Annotation To AWS Parameter Store External Secret: {es_namespace}/{es_name} Successful!")
+                    return True
 
         except ApiException as apie:
             self._logger.error("Kubernetes API Exception Thrown!", exec_info=apie)
@@ -114,12 +115,11 @@ class ESOAWSParameterStoreReloader(Reloader):
             if apie.status == 404:
                 self._logger.error("\n**HINT:** A 404 error usually means the CRD ('externalsecrets.external-secrets.io') is not installed in the cluster.")
 
-            sys.exit(1)
+            return False
+
         except Exception as e:
             self._logger.error("Kubernetes API Exception", exec_info=e)
-            sys.exit(1)
 
-
-        
+            return False
 
 

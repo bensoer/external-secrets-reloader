@@ -30,6 +30,8 @@ class EventBridgeProcessor(Processor[EventBridgeEntry]):
             self._logger.error("Exception Thrown Trying To Load Next Entry")
             return False
         
+    def mark_entry_resolved(self):
+        self.source.mark_entry_resolved()
 
     def get_entry(self) -> EventBridgeEntry:
         # Implementation for retrieving the message from the EventBridge entry

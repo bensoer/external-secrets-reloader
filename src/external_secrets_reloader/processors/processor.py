@@ -15,3 +15,7 @@ class Processor(ABC, Generic[T]):
     @abstractmethod
     def get_entry(self) -> T:
         ...
+
+    @abstractmethod
+    def mark_entry_resolved(self):
+        ...
