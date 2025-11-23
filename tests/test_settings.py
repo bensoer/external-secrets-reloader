@@ -79,14 +79,14 @@ def test_settings_overriding_default_values():
     """Tests that optional fields can be correctly overridden via environment variables."""
     custom_env = VALID_ENV.copy()
     custom_env.update({
-        "SQS_QUEUE_WAIT_TIME": "30",
+        "SQS_QUEUE_WAIT_TIME": "20",
         "HEALTH_CHECK_PORT": "9000",
         "LOG_LEVEL": "DEBUG"
     })
     
     settings = load_settings_with_env(custom_env)
     
-    assert settings.SQS_QUEUE_WAIT_TIME == 30
+    assert settings.SQS_QUEUE_WAIT_TIME == 20
     assert settings.HEALTH_CHECK_PORT == 9000
     assert settings.LOG_LEVEL == "DEBUG"
 
