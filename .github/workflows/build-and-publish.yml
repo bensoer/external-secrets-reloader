@@ -67,6 +67,7 @@ jobs:
           path: reports/junit/helm/unit.xml
 
   build-and-push-docker:
+    if: success()
     needs: [helm-unit-tests, python-unit-tests]
     runs-on: ubuntu-latest
     permissions:
