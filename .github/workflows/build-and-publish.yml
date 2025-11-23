@@ -55,9 +55,11 @@ jobs:
       - name: Run Helm Unit Tests and Generate Junit Report
         run: |
           mkdir -p reports/junit/helm
+          RUNNER_UID=$(id -u)
+          RUNNER_GID=$(id -g)
           # The command now includes '-o test-output.xml -t junit'
           # to generate the JUnit-style report in the current directory (which is mounted).
-          docker run --rm -v $(pwd):/apps helmunittest/helm-unittest:3.11.1-0.3.0 -o reports/junit/helm/unit.xml -t junit ./helm
+          docker run --rm --user $RUNNER_UID:$RUNNER_GID -v $(pwd):/apps helmunittest/helm-unittest:3.11.1-0.3.0 -o reports/junit/helm/unit.xml -t junit ./helm
         id: helm_tests
 
       - name: Upload Helm Test Results Artifact
