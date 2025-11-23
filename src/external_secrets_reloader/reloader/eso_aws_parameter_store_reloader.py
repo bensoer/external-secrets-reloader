@@ -85,7 +85,7 @@ class ESOAWSParameterStoreReloader(Reloader):
 
                 # Check if this ExternalSecret references the ParameterStore Key
                 data = ps_es.get("spec", {}).get("data", [])
-                key_matching_es = [ x for x in data if data.get("remoteRef", {}).get("key") == key]
+                key_matching_es = [ x for x in data if x.get("remoteRef", {}).get("key") == key]
 
                 # Means there is more then 0 references to our Key
                 if key_matching_es:
