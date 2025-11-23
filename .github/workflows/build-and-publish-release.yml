@@ -51,7 +51,7 @@ jobs:
       - name: Update Helm Chart.yaml appVersion
         run: |
           RELEASE_TAG=${{ github.event.release.tag_name }}
-          CHART_PATH="helm/Chart.yaml"
+          CHART_PATH="charts/external-secrets-reloader/Chart.yaml"
 
           echo "Updating $CHART_PATH appVersion to: $RELEASE_TAG"
 
@@ -99,13 +99,9 @@ jobs:
       - name: Releasing Helm Chart
         uses: helm/chart-releaser-action@v1.7.0
         with:
-          # The directory containing your Chart.yaml files (e.g., your /helm folder)
-          charts_dir: helm
           # The branch to push the packaged charts and index.yaml to
           pages_branch: gh-pages
 
         env:
           # GITHUB_TOKEN is automatically provided by GitHub Actions
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # The repository URL for the index.yaml (replace with your actual URL)
-          CR_BASE_URL: https://${{github.actor}}.github.io/${{github.repository}}
