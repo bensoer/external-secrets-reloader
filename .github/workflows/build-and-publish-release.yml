@@ -13,13 +13,15 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
       id-token: write
       attestations: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # important parameter
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -28,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ⚙️ Setup Tools (yq)
+      - name: Setup Tools (yq)
         # yq is required for Chart.yaml update
         run: sudo snap install yq
 
@@ -98,7 +100,7 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         with:
           # The directory containing your Chart.yaml files (e.g., your /helm folder)
-          charts_dir: ./helm
+          charts_dir: helm
           # The branch to push the packaged charts and index.yaml to
           pages_branch: gh-pages
 
