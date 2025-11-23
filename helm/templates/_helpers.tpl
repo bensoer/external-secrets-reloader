@@ -35,7 +35,6 @@ Common labels
 */}}
 {{- define "external-secrets-reloader.labels" -}}
 external-secrets-reloader/created-by: bensoer
-external-secrets-reloader/repository: https://github.com/bensoer/external-secrets-reloader
 helm.sh/chart: {{ include "external-secrets-reloader.chart" . }}
 {{ include "external-secrets-reloader.selectorLabels" . }}
 {{- if .Chart.AppVersion }}

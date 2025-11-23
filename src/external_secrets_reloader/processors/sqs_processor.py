@@ -15,6 +15,9 @@ class SQSProcessor(Processor[SQSEntry]):
         self.queue_url = queue_url
         self.wait_time = wait_time
 
+        self._logger.debug(f"QUEUE URL: {self.queue_url}")
+        self._logger.debug(f"QUEUE_WAIT_TIME: {self.wait_time}")
+
         # When it comes out the sqs_client it returns already as a dict
         self.current_message = dict()
 
@@ -23,8 +26,8 @@ class SQSProcessor(Processor[SQSEntry]):
         self._logger.debug("Hanging To Receive Next Message")
         response = self.sqs_client.receive_message(
             QueueUrl=self.queue_url,
-            MaxNumberOfMessages=self.wait_time,
-            WaitTimeSeconds=10
+            MaxNumberOfMessages=1,
+            WaitTimeSeconds=self.wait_time
         ) 
 
         self._logger.debug("Message Received Or Timeout Reached")

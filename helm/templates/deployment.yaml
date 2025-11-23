@@ -5,9 +5,7 @@ metadata:
   labels:
     {{- include "external-secrets-reloader.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "external-secrets-reloader.selectorLabels" . | nindent 6 }}
@@ -22,8 +20,8 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-    terminationGracePeriodSeconds: 90 # Needs this long as longest hanging service can be up to 1 minute
     spec:
+      terminationGracePeriodSeconds: 90 # Needs this long as longest hanging service can be up to 1 minute
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -43,7 +41,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 8080
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
@@ -60,6 +58,10 @@ spec:
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . |nindent 12 }}
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
