@@ -1,5 +1,5 @@
 # External Secrets Reloader
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/external-secrets-reloader)](https://artifacthub.io/packages/search?repo=external-secrets-reloader)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/external-secrets-reloader)](https://artifacthub.io/packages/helm/external-secrets-reloader/external-secrets-reloader)
 
 ![Python Version](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbensoer%2Fexternal-secrets-reloader%2Frefs%2Fheads%2Fmain%2F.python-version&search=.*&logo=python&logoColor=blue&label=python&color=yellow)
 ![Latest Container](https://img.shields.io/github/v/release/bensoer/external-secrets-reloader?sort=semver&filter=v*&logo=docker&label=Latest%20Container&color=blue)
