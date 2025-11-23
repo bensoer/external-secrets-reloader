@@ -7,6 +7,7 @@ from kubernetes.client.rest import ApiException
 import logging
 import sys
 import time
+import signal
 
 
 class ESOAWSParameterStoreReloader(Reloader):
@@ -16,15 +17,15 @@ class ESOAWSParameterStoreReloader(Reloader):
     PLURAL = "externalsecrets"
 
     def __init__(self):
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self._logger = logging.getLogger(self.__class__.__name__)
 
         try:
             config.load_incluster_config()
-            self.logger.debug("Loading K8s Configuration Successful")
+            self._logger.debug("Loading K8s Configuration Successful")
         except Exception as e:
-            self.logger.error("Exception Thrown Loading K8s In Cluster Configuration", exc_info=e)
-            self.logger.error("Is External Secrets Reloader Running Inside Of A Kubernetes Cluster ?")
-            sys.exit(1)
+            self._logger.error("Exception Thrown Loading K8s In Cluster Configuration", exc_info=e)
+            self._logger.error("Is External Secrets Reloader Running Inside Of A Kubernetes Cluster ?")
+            signal.raise_signal(signal.SIGTERM)
 
         self.k8s_client = client.CustomObjectsApi()
         
@@ -44,6 +45,30 @@ class ESOAWSParameterStoreReloader(Reloader):
 
         try:
 
+            self._logger.debug("Finding All AWS ParamterStore Configured SecretStores")
+            # Get the names of all the secret stores that use ParameterStore
+            secret_store_results = self.k8s_client.list_cluster_custom_object(
+                group = self.GROUP,
+                version = self.VERSION,
+                plural= "secretstores"
+            )
+            secret_stores = secret_store_results.get('items', [])
+            parameter_store_ss_names = [ ss["metadata"]["name"] for ss in secret_stores if ss.get('spec', {}).get('provider', {}).get('aws', {}).get('service') == 'ParameterStore' ]
+
+            self._logger.debug("Finding All AWS ParameterStore Configured ClusterSecretStores")
+            # Get the names of all the Cluster Secret Stores that use ParameterStore
+            cluster_secret_store_results = self.k8s_client.list_cluster_custom_object(
+                group=self.GROUP,
+                version=self.VERSION,
+                plural="clustersecretstores"
+            )
+            cluster_secret_stores = cluster_secret_store_results.get('items', [])
+            parameter_store_css_names = [ css["metadata"]["name"] for css in cluster_secret_stores if css.get('spec', {}).get('provider', {}).get('aws', {}).get('service') == 'ParameterStore' ]
+
+            all_parameter_store_names = parameter_store_ss_names + parameter_store_css_names
+
+
+            self._logger.debug("Finding All ExternalSecrets that use the AWS ParameterStore SecretStores or ClusterSecretStores")
             # Get all of the ExternalSecret entries within the cluster
             external_secrets_result = self.k8s_client.list_cluster_custom_object(
                 group = self.GROUP,
@@ -52,8 +77,8 @@ class ESOAWSParameterStoreReloader(Reloader):
             )
             external_secrets = external_secrets_result.get('items', [])
             
-            # Filter to only the ExternalSecret entries of type AWS ParameterStore
-            parameter_store_es = [ es for es in external_secrets if es.get('spec', {}).get('provider', {}).get('aws', {}).get('service') == 'ParameterStore' ]
+            # Filter to only the ExternalSecret that are part of the parameter store names
+            parameter_store_es = [ es for es in external_secrets if es.get('spec', {}).get('secretStoreRef', {}).get('name') in all_parameter_store_names ]
 
 
             for ps_es in parameter_store_es:
@@ -71,7 +96,7 @@ class ESOAWSParameterStoreReloader(Reloader):
 
                     patch_payload = self._generate_patch_payload()
 
-                    self.logger.info(f"Reloading AWS Parameter Store External Secret: {es_namespace}/{es_name}")
+                    self._logger.info(f"Reloading AWS Parameter Store External Secret: {es_namespace}/{es_name}")
                     self.k8s_client.patch_namespaced_custom_object(
                         group = self.GROUP,
                         version = self.VERSION,
@@ -81,17 +106,17 @@ class ESOAWSParameterStoreReloader(Reloader):
                         body = patch_payload
                     )
 
-                    self.logger.debug(f"Applying Annotation To AWS Parameter Store External Secret: {es_namespace}/{es_name} Successful!")
+                    self._logger.debug(f"Applying Annotation To AWS Parameter Store External Secret: {es_namespace}/{es_name} Successful!")
 
         except ApiException as apie:
-            self.logger.error("Kubernetes API Exception Thrown!", exec_info=apie)
+            self._logger.error("Kubernetes API Exception Thrown!", exec_info=apie)
 
             if apie.status == 404:
-                self.logger.error("\n**HINT:** A 404 error usually means the CRD ('externalsecrets.external-secrets.io') is not installed in the cluster.")
+                self._logger.error("\n**HINT:** A 404 error usually means the CRD ('externalsecrets.external-secrets.io') is not installed in the cluster.")
 
             sys.exit(1)
         except Exception as e:
-            self.logger.error("Kubernetes API Exception", exec_info=e)
+            self._logger.error("Kubernetes API Exception", exec_info=e)
             sys.exit(1)
 
 
