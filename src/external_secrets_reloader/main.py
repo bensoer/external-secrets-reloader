@@ -5,7 +5,7 @@ import signal
 from sys import exit, stdout
 from pythonjsonlogger import jsonlogger
 
-from external_secrets_reloader.event_handler.aws_event_handler import AWSEventHandler
+from external_secrets_reloader.event_handler.eso_event_handler import ESOEventHandler
 from external_secrets_reloader.health_check.health_status_thread import HealthStatusThread
 from external_secrets_reloader.processors.eventbridge_processor import EventBridgeProcessor
 from external_secrets_reloader.processors.sqs_processor import SQSProcessor
@@ -122,15 +122,19 @@ def main() -> None:
     logger.debug("Health Check Endpoints Started")
 
     
+    processor = None
+    reloader = None
     event_handler = None
+
     try:
         logger.info("Initializing processors, reloaders and event handlers")
 
         if settings.EVENT_SOURCE == "AWS":
             sqs_processor = SQSProcessor(settings.SQS_QUEUE_URL, settings.SQS_QUEUE_WAIT_TIME)
-            event_bridge_processor = EventBridgeProcessor(sqs_processor)
-            esoawspr = ESOAWSProviderReloader(ProviderType[settings.EVENT_SERVICE])
-            event_handler = AWSEventHandler(event_bridge_processor, esoawspr)
+            processor = EventBridgeProcessor(sqs_processor)
+            reloader = ESOAWSProviderReloader(ProviderType[settings.EVENT_SERVICE])
+        
+        event_handler = ESOEventHandler(processor, reloader)
 
         logger.debug("All components initialized successfully")
         health_status.set_healthy(True)

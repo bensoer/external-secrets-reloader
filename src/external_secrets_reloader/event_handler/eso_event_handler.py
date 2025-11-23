@@ -6,11 +6,11 @@ import logging
 import time
 import random
 
-from external_secrets_reloader.reloader.eso_aws_provider_reloader import ESOAWSProviderReloader
+from external_secrets_reloader.reloader.reloader import Reloader
 
-class AWSEventHandler():
+class ESOEventHandler():
 
-    def __init__(self, processor: Processor[ESOKeyParser], reloader: ESOAWSProviderReloader):
+    def __init__(self, processor: Processor[ESOKeyParser], reloader: Reloader):
         self.processor = processor
         self.reloader = reloader
         self._logger = logging.getLogger(self.__class__.__name__)
