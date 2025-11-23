@@ -13,7 +13,7 @@ env/
 venv/
 .uv/
 
-.coverage
+
 .pytest_cache
 
 myvalues.yaml
@@ -32,3 +32,8 @@ myvalues.yaml
 
 # OS-specific
 .DS_Store
+
+# Reporting output
+reports
+.coverage
+.xml

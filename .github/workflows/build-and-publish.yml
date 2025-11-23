@@ -10,7 +10,64 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  python-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python with uv
+        # This action handles installing uv and can set the Python version
+        uses: astral-sh/setup-uv@v7 # Use the latest version
+        with:
+          # Optionally specify a Python version or let uv read it from .python-version or pyproject.toml
+          python-version: '3.11' 
+          # Enable caching for faster dependency resolution on subsequent runs
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: uv sync
+  
+      - name: Run PyTests
+        run: uv run pytest
+
+      - name: Upload Pytest JUnit Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pytest-junit-report
+          path: reports/junit/unit.xml
+            
+      # Upload the Coverage XML file for external tools (e.g., Codecov, SonarQube)
+      - name: Upload Coverage XML Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-xml-report
+          path: reports/coverage/coverage.xml
+
+  helm-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    
+      - name: Run Helm Unit Tests and Generate Junit Report
+        run: |
+          # The command now includes '-o test-output.xml -t junit'
+          # to generate the JUnit-style report in the current directory (which is mounted).
+          docker run --rm -v $(pwd):/apps helmunittest/helm-unittest:3.11.1-0.3.0 -o rerpots/junit/helm/unit.xml -t junit .
+        id: helm_tests
+
+      - name: Upload Helm Test Results Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: helm-unittest-results
+          path: reports/junit/helm/unit.xml
+
+  build-and-push-docker:
+    needs: [helm-unit-tests, python-unit-tests]
     runs-on: ubuntu-latest
     permissions:
       contents: read

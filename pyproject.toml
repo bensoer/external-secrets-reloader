@@ -19,7 +19,7 @@ external-secrets-reloader = "external_secrets_reloader.main:main"
 module-name = "external_secrets_reloader"
 
 [tool.pytest.ini_options]
-addopts = "--maxfail=1 --cov=external_secrets_reloader"
+addopts = "--maxfail=1 --cov=external_secrets_reloader --cov-report=term-missing --junitxml=reports/junit/unit.xml --cov-report=xml:reports/coverage/coverage.xml"
 pythonpath = ["src"]
 
 [build-system]

@@ -61,3 +61,20 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Releasing Helm Chart
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          # The directory containing your Chart.yaml files (e.g., your /helm folder)
+          charts_dir: ./helm
+          # The branch to push the packaged charts and index.yaml to
+          target_branch: gh-pages
+
+        env:
+          # GITHUB_TOKEN is automatically provided by GitHub Actions
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The repository URL for the index.yaml (replace with your actual URL)
+          CR_BASE_URL: https://${{github.actor}}.github.io/${{github.repository}}

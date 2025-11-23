@@ -5,5 +5,16 @@ ESO is great but its setup requires you either to fully embrace immutability and
 
 Currently the project supports AWS Parameter Store as a source, but the intention is also to include AWS Secrets Manager and Azure Key Vault. 
 
+Currently Supports Event Source:
+- AWS Parameter Store
+- AWS Secrets Manager
 
-Documentation on how to set this all up is still to come!
+Planned Supported Event Sources:
+- Azure KeyVault Secrets
+
+# Setup
+
+
+
+# Developer Notes
+

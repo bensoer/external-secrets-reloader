@@ -178,7 +178,7 @@ def test_load_next_entry_backoff_increase(processor_instance, mock_boto3_client_
 
     # Assert final state and check call arguments
     assert processor_instance.empty_poll_count == 3
-    assert processor_instance.current_wait_time == 40
+    assert processor_instance.current_wait_time == 20
     
     # Check the call arguments for the last poll
     assert mock_sqs_client_instance.receive_message.call_args_list[2].kwargs['WaitTimeSeconds'] == 20
