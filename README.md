@@ -24,7 +24,7 @@ ESR is easiest deployed using Helm, along with configuration to setup what you w
 
 Below will walk you through a high level setup:
 
-# 1) Add Configuration Secret To Your Cluster
+## 1) Add Configuration Secret To Your Cluster
 To use ESR you will need to configure the `EVENT_SOURCE` and `EVENT_SERVICE` along with AWS Credentials to monitor the SQS Queue the events are coming from. The following minimum `values.yaml` should get you started
 
 Create a secret called `esr-configuration-secret`:
@@ -45,7 +45,7 @@ Apply to your cluster
 kubectl apply -f ./esr-configuration-secret
 ```
 
-# 2) Add AWS Configuration Secret To Your Cluster
+## 2) Add AWS Configuration Secret To Your Cluster
 ESR uses `boto3` to access AWS' SQS Queue. If ESR is running inside of AKS, or a Kubernetes cluster already running inside AWS, you can get away with providing access via a ServicePrincipal. If you are not running within AWS, you will need to provide access credentials. 
 
 Create another secret called `esr-aws-credentials`:
@@ -66,7 +66,7 @@ Apply to your cluster
 kubectl apply -f ./esr-aws-credentials
 ```
 
-# 3) Create `values.yaml` file And Deploy The ESR Helm Chart
+## 3) Create `values.yaml` file And Deploy The ESR Helm Chart
 
 Create a `values.yaml` file and put the following within it:
 ```yaml
@@ -85,7 +85,7 @@ helm repo add external-secrets-reloader https://bensoer.github.io/external-secre
 helm upgrade --install external-secrets-reloader/external-secrets-reloader --values=values.yaml
 ```
 
-# 4) Check Logs In Case Of Any Connection Issues
+## 4) Check Logs In Case Of Any Connection Issues
 If ESR Can't Connect or is running into issues, the logs are the best place to find out
 
 ```bash
