@@ -22,13 +22,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     SQS_QUEUE_URL: str | None = None
-    SQS_QUEUE_WAIT_TIME: int | None = Field(gt=0, le=60, default=10, description="Amount of Time SQS Client Will Wait For Events Before Timeout. App will check whether to continue between timeouts")
-
+    SQS_QUEUE_WAIT_TIME: int | None = Field(gt=0, le=20, default=10, description="Amount of Time SQS Client Will Wait For Events Before Timeout. App will check whether to continue between timeouts")
 
     EVENT_SOURCE: Literal["AWS"]
     EVENT_SERVICE: Literal["ParameterStore", "SecretsManager"]
-
-
 
     HEALTH_CHECK_PORT: int = Field(ge=1024, lt=65535, default=8080, description="Port the Health Check Endpoints Are Served Over")
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARN", "ERROR"] = "INFO"
