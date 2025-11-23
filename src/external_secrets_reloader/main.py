@@ -9,7 +9,7 @@ from external_secrets_reloader.event_handler.aws_event_handler import AWSEventHa
 from external_secrets_reloader.health_check.health_status_thread import HealthStatusThread
 from external_secrets_reloader.processors.eventbridge_processor import EventBridgeProcessor
 from external_secrets_reloader.processors.sqs_processor import SQSProcessor
-from external_secrets_reloader.reloader.eso_aws_provider_reloader import ESOAWSProviderReloader
+from external_secrets_reloader.reloader.eso_aws_provider_reloader import ESOAWSProviderReloader, ProviderType
 from external_secrets_reloader.settings import Settings
 
 print("==== Starting Application ====")
@@ -129,7 +129,7 @@ def main() -> None:
         if settings.EVENT_SOURCE == "AWS":
             sqs_processor = SQSProcessor(settings.SQS_QUEUE_URL, settings.SQS_QUEUE_WAIT_TIME)
             event_bridge_processor = EventBridgeProcessor(sqs_processor)
-            esoawspr = ESOAWSProviderReloader(settings.EVENT_SERVICE)
+            esoawspr = ESOAWSProviderReloader(ProviderType[settings.EVENT_SERVICE])
             event_handler = AWSEventHandler(event_bridge_processor, esoawspr)
 
         logger.debug("All components initialized successfully")
