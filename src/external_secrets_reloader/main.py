@@ -14,33 +14,6 @@ from external_secrets_reloader.settings import Settings
 
 print("==== Starting Application ====")
 
-# SIGINT and SIGTERM Handling. Gracefully stop things when we receive any of those
-# SIGTERM - Kuberentes sends this as a warning when it wants to shut the pod down
-# SIGINT - Generally CTRL+C events send this to the process
-
-CONTINUE_PROCESSING = True
-def signal_handler(sig, frame):
-    global CONTINUE_PROCESSING
-
-    """
-    Custom handler function for signals.
-    """
-    if sig == signal.SIGINT:
-        print('Received SIGINT (Ctrl+C). Performing graceful shutdown...')
-    elif sig == signal.SIGTERM:
-        print('Received SIGTERM. Performing graceful shutdown...')
-    else:
-        print(f'Received signal {sig}. Performing graceful shutdown...')
-
-    CONTINUE_PROCESSING = False
-    return
-
-
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
-print("==== SIG Handlers Registered ====")
-
 # .env file or environment variable parsing all out into a single object
 settings = Settings()
 
@@ -94,6 +67,33 @@ logging.getLogger("werkzeug").setLevel(logging.WARNING if logging_level_int != l
 logger = logging.getLogger("external-secrets-reloader")
 
 print("==== Logging Registered ====")
+
+# SIGINT and SIGTERM Handling. Gracefully stop things when we receive any of those
+# SIGTERM - Kuberentes sends this as a warning when it wants to shut the pod down
+# SIGINT - Generally CTRL+C events send this to the process
+
+CONTINUE_PROCESSING = True
+def signal_handler(sig, frame):
+    global CONTINUE_PROCESSING
+
+    """
+    Custom handler function for signals.
+    """
+    if sig == signal.SIGINT:
+        logger.info('Received SIGINT (Ctrl+C). Starting graceful shutdown...')
+    elif sig == signal.SIGTERM:
+        logger.info('Received SIGTERM. Starting graceful shutdown...')
+    else:
+        logger.info(f'Received signal {sig}. Performing graceful shutdown...')
+
+    CONTINUE_PROCESSING = False
+    return
+
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+print("==== SIG Handlers Registered ====")
 
 def main() -> None:
     global CONTINUE_PROCESSING
