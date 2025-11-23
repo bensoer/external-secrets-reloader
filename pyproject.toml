@@ -18,6 +18,17 @@ external-secrets-reloader = "external_secrets_reloader.main:main"
 [tool.uv.build-backend]
 module-name = "external_secrets_reloader"
 
+[tool.pytest.ini_options]
+addopts = "--maxfail=1 --cov=external_secrets_reloader"
+pythonpath = ["src"]
+
 [build-system]
 requires = ["uv_build>=0.9.11,<0.10.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+]

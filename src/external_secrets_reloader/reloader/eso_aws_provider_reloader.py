@@ -114,6 +114,9 @@ class ESOAWSProviderReloader(Reloader):
 
                     self._logger.debug(f"Applying Annotation To AWS {self.provider_type} External Secret: {es_namespace}/{es_name} Successful!")
                     return True
+            
+            # If we made it to here, that means we never found any matching entries, but we did so successfully, so still return True
+            return True
 
         except ApiException as apie:
             self._logger.error("Kubernetes API Exception Thrown!", exc_info=apie)

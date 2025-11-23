@@ -12,9 +12,6 @@ class ESOKeyParser(ABC):
     reloader will reload that specific ExternalSecret
     '''
 
-    def __init__(self):
-        pass
-
     @abstractmethod
     def get_key() -> str:
         '''
