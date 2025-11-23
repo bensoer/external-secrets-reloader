@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Release Build and Push Docker Image
 
 on:
     release:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   build-and-push:
-    
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -67,7 +67,7 @@ jobs:
         uses: azure/setup-helm@v4
 
       - name: Releasing Helm Chart
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           # The directory containing your Chart.yaml files (e.g., your /helm folder)
           charts_dir: ./helm
