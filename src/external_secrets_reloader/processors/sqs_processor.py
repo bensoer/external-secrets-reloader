@@ -8,7 +8,7 @@ from external_secrets_reloader.entries.sqsentry import SQSEntry
 from external_secrets_reloader.processors.processor import Processor
 
 class SQSProcessor(Processor[SQSEntry]):
-    MAX_SQS_WAIT_TIME = 60
+    MAX_SQS_WAIT_TIME = 20
 
     def __init__(self, queue_url: str, min_wait_time:int):
         self.sqs_client = boto3.client('sqs')
