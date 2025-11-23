@@ -111,4 +111,6 @@ Below is a table covering all of the available configuration options
 
 
 # Developer Notes
+- Need documentation on how to configure ParameterStore | SecretsManager -> EventBridge -> SQS Queue
+- Need documentation on any IAM permissions needed for SQS Queue access by ESR
 
