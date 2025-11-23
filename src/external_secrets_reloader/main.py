@@ -5,11 +5,11 @@ import signal
 from sys import exit, stdout
 from pythonjsonlogger import jsonlogger
 
-from external_secrets_reloader.event_handler.aws_parameter_store_event_handler import AWSParameterStoreEventHandler
+from external_secrets_reloader.event_handler.aws_event_handler import AWSEventHandler
 from external_secrets_reloader.health_check.health_status_thread import HealthStatusThread
 from external_secrets_reloader.processors.eventbridge_processor import EventBridgeProcessor
 from external_secrets_reloader.processors.sqs_processor import SQSProcessor
-from external_secrets_reloader.reloader.eso_aws_parameter_store_reloader import ESOAWSParameterStoreReloader
+from external_secrets_reloader.reloader.eso_aws_provider_reloader import ESOAWSProviderReloader
 from external_secrets_reloader.settings import Settings
 
 print("==== Starting Application ====")
@@ -122,15 +122,16 @@ def main() -> None:
     logger.debug("Health Check Endpoints Started")
 
     
+    event_handler = None
     try:
         logger.info("Initializing processors, reloaders and event handlers")
 
-        sqs_processor = SQSProcessor(settings.SQS_QUEUE_URL, settings.SQS_QUEUE_WAIT_TIME)
-        event_bridge_processor = EventBridgeProcessor(sqs_processor)
+        if settings.EVENT_SOURCE == "AWS":
+            sqs_processor = SQSProcessor(settings.SQS_QUEUE_URL, settings.SQS_QUEUE_WAIT_TIME)
+            event_bridge_processor = EventBridgeProcessor(sqs_processor)
+            esoawspr = ESOAWSProviderReloader(settings.EVENT_SERVICE)
+            event_handler = AWSEventHandler(event_bridge_processor, esoawspr)
 
-        esoapsr = ESOAWSParameterStoreReloader()
-        aws_pseh = AWSParameterStoreEventHandler(event_bridge_processor, esoapsr)
-        
         logger.debug("All components initialized successfully")
         health_status.set_healthy(True)
         health_status.set_ready(True)
@@ -143,6 +144,6 @@ def main() -> None:
         return
 
     while CONTINUE_PROCESSING:
-        aws_pseh.poll_for_events()
+        event_handler.poll_for_events()
 
     logger.info("Processing Has Stopped As We Are Shutting Down. Goodbye!")
