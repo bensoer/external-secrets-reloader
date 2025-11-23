@@ -28,8 +28,6 @@ def signal_handler(sig, frame):
         print(f'Received signal {sig}. Performing graceful shutdown...')
 
     CONTINUE_PROCESSING = False
-
-    exit(0)
     return
 
 
@@ -115,3 +113,5 @@ def main() -> None:
 
     while CONTINUE_PROCESSING:
         aws_pseh.poll_for_events()
+
+    logger.info("Processing Has Stopped As We Are Shutting Down. Goodbye!")
