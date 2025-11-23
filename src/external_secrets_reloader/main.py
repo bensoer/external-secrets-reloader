@@ -14,6 +14,10 @@ from external_secrets_reloader.settings import Settings
 
 print("==== Starting Application ====")
 
+# SIGINT and SIGTERM Handling. Gracefully stop things when we receive any of those
+# SIGTERM - Kuberentes sends this as a warning when it wants to shut the pod down
+# SIGINT - Generally CTRL+C events send this to the process
+
 CONTINUE_PROCESSING = True
 def signal_handler(sig, frame):
     global CONTINUE_PROCESSING
@@ -37,9 +41,15 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 print("==== SIG Handlers Registered ====")
 
+# .env file or environment variable parsing all out into a single object
 settings = Settings()
 
 print("==== Environment Settings Parsed ====")
+
+# Logging configuration, allows for global control of logging level and
+# configures logging across dependencies. Keeps dependencies quiet
+# unless it is WARN or higher, unless LOG_LEVEL from the settings are
+# set to DEBUG, then also sets depdnencies levels to INFO
 
 logging_levels = {
     'ERROR': logging.ERROR,
@@ -79,6 +89,8 @@ logging.getLogger("botocore").setLevel(logging.WARNING if logging_level_int != l
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("werkzeug").setLevel(logging.WARNING if logging_level_int != logging.DEBUG else logging.INFO)
 
+# This is our logger for this main bootstrapping code here. Classes all log using a class logger
+# that inherits configuration from the rootLogger
 logger = logging.getLogger("external-secrets-reloader")
 
 print("==== Logging Registered ====")
