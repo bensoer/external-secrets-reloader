@@ -30,7 +30,7 @@ class ESOAWSParameterStoreReloader(Reloader):
         self.k8s_client = client.CustomObjectsApi()
         
 
-    def _generate_patch_payload() -> dict:
+    def _generate_patch_payload(self) -> dict:
         current_timestamp = str(int(time.time()))
 
         return {
