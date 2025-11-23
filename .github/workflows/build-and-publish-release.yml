@@ -100,7 +100,7 @@ jobs:
           # The directory containing your Chart.yaml files (e.g., your /helm folder)
           charts_dir: ./helm
           # The branch to push the packaged charts and index.yaml to
-          target_branch: gh-pages
+          pages_branch: gh-pages
 
         env:
           # GITHUB_TOKEN is automatically provided by GitHub Actions
