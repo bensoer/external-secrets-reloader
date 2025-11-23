@@ -4,6 +4,7 @@ from os import environ
 from typing import Literal
 
 from pydantic_settings import BaseSettings
+from typing_extensions import Self
 
 from pydantic import (
     AliasChoices,
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     SQS_QUEUE_URL: str | None = None
     SQS_QUEUE_WAIT_TIME: int | None = Field(gt=0, le=60, default=10, description="Amount of Time SQS Client Will Wait For Events Before Timeout. App will check whether to continue between timeouts")
 
-        
+
     EVENT_SOURCE: Literal["AWS"]
     EVENT_SERVICE: Literal["ParameterStore", "SecretsManager"]
 
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
 
 
     @model_validator(mode='after')
-    def validate_cloud_dependencies(self) -> 'Settings':
+    def validate_cloud_dependencies(self) -> Self:
         
         if self.EVENT_SOURCE == "AWS":
             valid_aws_services = ["ParameterStore", "SecretsManager"]
