@@ -5,6 +5,10 @@ metadata:
   labels:
     {{- include "external-secrets-reloader.labels" . | nindent 4 }}
 spec:
+  # We want to recreate so that the old one shutsdown before the new one starts. This avoids during rollouts or updates 
+  # Both receiving and processing events OR the old one receiving but then terminating before it can complete
+  strategy:
+    type: Recreate
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:

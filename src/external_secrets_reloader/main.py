@@ -2,7 +2,8 @@
 
 import logging
 import signal
-from sys import exit
+from sys import exit, stdout
+from pythonjsonlogger import jsonlogger
 
 from external_secrets_reloader.event_handler.aws_parameter_store_event_handler import AWSParameterStoreEventHandler
 from external_secrets_reloader.health_check.health_status_thread import HealthStatusThread
@@ -48,11 +49,24 @@ logging_levels = {
 }
 logging_level_int = logging_levels.get(settings.LOG_LEVEL, logging.INFO)
 
-logging.basicConfig(
-    level=logging_level_int,
-    format='%(asctime)s [%(levelname)s] %(name)s : %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+rootLogger = logging.getLogger()
+rootLogger.setLevel(logging_level_int)
+
+# Simple json output when we are not in DEBUG mode
+json_format = '%(asctime)s %(levelname)s %(name)s %(message)s'
+if logging_level_int == logging.DEBUG:
+    # More verbose and detailed logging info when we are in DEBUG mode
+    json_format = '%(timestamp)s %(levelno)s %(levelname)s %(name)s %(module)s %(funcName)s %(lineno)d %(message)s'
+
+formatter = jsonlogger.JsonFormatter(json_format, datefmt='%Y-%m-%d %H:%M:%S')
+
+handler = logging.StreamHandler(stdout)
+handler.setFormatter(formatter)
+
+if rootLogger.hasHandlers():
+    rootLogger.handlers.clear()
+rootLogger.addHandler(handler)
+
 
 # Suppress verbose logging from third-party libraries
 logging.getLogger("boto3").setLevel(logging.WARNING)
