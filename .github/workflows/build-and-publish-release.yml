@@ -96,6 +96,11 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v4
 
+      - name: "Setup Git Values"
+        run: |
+          git config --global user.email "ben@soernet.ca"
+          git config --global user.name "bensoer"
+
       - name: Releasing Helm Chart
         uses: helm/chart-releaser-action@v1.7.0
         with:
