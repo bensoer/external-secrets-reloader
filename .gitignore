@@ -5,10 +5,30 @@ build/
 dist/
 wheels/
 *.egg-info
+*.so
 
 # Virtual environments
 .venv
+env/
+venv/
+.uv/
 
 .coverage
+.pytest_cache
 
 myvalues.yaml
+
+# Helm
+*.tgz
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Environment variables
+.env
+
+# OS-specific
+.DS_Store
