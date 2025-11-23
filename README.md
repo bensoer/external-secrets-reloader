@@ -50,7 +50,6 @@ ESR uses `boto3` to access AWS' SQS Queue. If ESR is running inside of AKS, or a
 
 Create another secret called `esr-aws-credentials`:
 ```yaml
-```yaml
 apiVersion: v1
 kind: Secret
 metadata:
