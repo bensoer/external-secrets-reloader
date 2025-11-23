@@ -5,7 +5,7 @@ metadata:
   name: external-secret-reloader-editor-role
 rules:
 - apiGroups: ["external-secrets.io"]
-  resources: ["externalsecrets"]
+  resources: ["externalsecrets", "secretstores", "clustersecretstores"]
   # The essential verbs are:
   # 'list' for querying all CRs
   # 'patch' for adding/modifying annotations
