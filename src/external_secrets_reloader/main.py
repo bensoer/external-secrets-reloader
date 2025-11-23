@@ -132,7 +132,7 @@ def main() -> None:
         if settings.EVENT_SOURCE == "AWS":
             sqs_processor = SQSProcessor(settings.SQS_QUEUE_URL, settings.SQS_QUEUE_WAIT_TIME)
             processor = EventBridgeProcessor(sqs_processor)
-            reloader = ESOAWSProviderReloader(ProviderType[settings.EVENT_SERVICE])
+            reloader = ESOAWSProviderReloader(ProviderType(settings.EVENT_SERVICE))
         
         event_handler = ESOEventHandler(processor, reloader)
 
