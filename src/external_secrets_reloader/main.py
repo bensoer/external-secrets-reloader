@@ -2,6 +2,7 @@
 
 import logging
 import signal
+from sys import exit
 
 from external_secrets_reloader.event_handler.aws_parameter_store_event_handler import AWSParameterStoreEventHandler
 from external_secrets_reloader.health_check.health_status_thread import HealthStatusThread
@@ -27,6 +28,9 @@ def signal_handler(sig, frame):
         print(f'Received signal {sig}. Performing graceful shutdown...')
 
     CONTINUE_PROCESSING = False
+
+    exit(0)
+    return
 
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -111,4 +115,3 @@ def main() -> None:
 
     while CONTINUE_PROCESSING:
         aws_pseh.poll_for_events()
-
