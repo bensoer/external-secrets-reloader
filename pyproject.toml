@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-external-secrets-reloader = "external_secrets_reloader.__main__:main"
+external-secrets-reloader = "external_secrets_reloader.main:main"
 
 [tool.uv.build-backend]
 module-name = "external_secrets_reloader"
