@@ -74,8 +74,8 @@ rootLogger.addHandler(handler)
 
 
 # Suppress verbose logging from third-party libraries
-logging.getLogger("boto3").setLevel(logging.WARNING)
-logging.getLogger("botocore").setLevel(logging.WARNING)
+logging.getLogger("boto3").setLevel(logging.WARNING if logging_level_int != logging.DEBUG else logging.INFO)
+logging.getLogger("botocore").setLevel(logging.WARNING if logging_level_int != logging.DEBUG else logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("werkzeug").setLevel(logging.WARNING if logging_level_int != logging.DEBUG else logging.INFO)
 
