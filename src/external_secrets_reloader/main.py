@@ -53,7 +53,7 @@ rootLogger = logging.getLogger()
 rootLogger.setLevel(logging_level_int)
 
 # Simple json output when we are not in DEBUG mode
-json_format = '%(asctime)s %(levelname)s %(name)s %(message)s'
+json_format = '%(timestamp)s %(levelname)s %(name)s %(message)s'
 if logging_level_int == logging.DEBUG:
     # More verbose and detailed logging info when we are in DEBUG mode
     json_format = '%(timestamp)s %(levelno)s %(levelname)s %(name)s %(module)s %(funcName)s %(lineno)d %(message)s'
