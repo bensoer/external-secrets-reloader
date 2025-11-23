@@ -28,6 +28,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: ⚙️ Setup Tools (yq)
+        # yq is required for Chart.yaml update
+        run: sudo snap install yq
+
+      - name: Update pyproject.toml Version
+        run: |
+          # 1. Strip the leading 'v' from the tag to get just the version number (e.g., v1.2.3 -> 1.2.3)
+          RELEASE_VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/^v//')
+          TOML_FILE="pyproject.toml"
+          
+          echo "Updating $TOML_FILE to version: $RELEASE_VERSION"
+          
+          # Use sed to find the version line (assuming it looks like 'version = "x.x.x"') 
+          # and replace the content inside the quotes.
+          # NOTE: Adjust the pattern 'version =' if your file uses a different key name (e.g., 'tool.poetry.version').
+          # This assumes the version is under [project] or a similar top-level key.
+          sed -i 's/^\(version = "\).*\("\)/\1'"$RELEASE_VERSION"'\2/' "$TOML_FILE"
+
+      - name: Update Helm Chart.yaml appVersion
+        run: |
+          RELEASE_TAG=${{ github.event.release.tag_name }}
+          CHART_PATH="helm/Chart.yaml"
+
+          echo "Updating $CHART_PATH appVersion to: $RELEASE_TAG"
+
+          # yq is used to reliably update the YAML structure.
+          yq -i ".appVersion = \"$RELEASE_TAG\"" "$CHART_PATH"
+
       - name: Extract version from pyproject.toml
         id: get_version
         run: |
